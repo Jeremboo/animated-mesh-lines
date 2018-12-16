@@ -4,7 +4,6 @@ const fs = require('fs');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const poststylus = require('poststylus');
 
 
@@ -25,12 +24,6 @@ const plugins = [
       },
     },
   }),
-  new MiniCssExtractPlugin({
-    // Options similar to the same options in webpackOptions.output
-    // both options are optional
-    filename: '[name].css',
-    chunkFilename: '[id].css'
-  })
 ];
 
 // * Dynamic entry points for each demos
@@ -82,23 +75,22 @@ module.exports = {
     {
       test: /\.(styl|css)$/,
       use: [
-        MiniCssExtractPlugin.loader,
-        // {
-        //   loader: 'style-loader',
-        //   options: {
-        //     sourceMap: true
-        //   },
-        // },
+        {
+          loader: 'style-loader',
+          options: {
+            // sourceMap: true
+          },
+        },
         {
           loader: 'css-loader',
           options: {
-            sourceMap: true
+            // sourceMap: true
           },
         },
         {
           loader: 'stylus-loader',
           options: {
-            sourceMap: true
+            // sourceMap: true
           },
         },
       ],

@@ -102,7 +102,7 @@ a:focus {
 	align-items: center;
 }
 
-._overlay {
+.overlay {
 	position: absolute;
 	pointer-events: none;
 	top: 0;

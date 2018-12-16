@@ -76,7 +76,7 @@ engine.add(lineGenerator);
  * * *******************
  */
 const starGeometry = new SphereGeometry(0.5, 2, 2);
-const starMaterial = new MeshBasicMaterial({ color: 0xECF0F1, transparent: true, opacity: 0.05 });
+const starMaterial = new MeshBasicMaterial({ color: 0xECF0F1, transparent: true, opacity: 0.3 });
 class Star extends Mesh {
   constructor() {
     super(starGeometry, starMaterial);
@@ -85,7 +85,8 @@ class Star extends Mesh {
     this.position.set(
       Math.random() - 0.5,
       Math.random() - 0.5,
-      Math.random() - 0.5).normalize().multiplyScalar(getRandomFloat(100, 500));
+      -Math.random() * 0.5
+    ).normalize().multiplyScalar(getRandomFloat(100, 300));
 
     this.update = this.update.bind(this);
   }
@@ -96,7 +97,7 @@ class Star extends Mesh {
   }
 }
 // TODO make instancied Stars
-for (let i = 0; i < 1000; i++) {
+for (let i = 0; i < 300; i++) {
   const star = new Star();
   engine.add(star);
 }
@@ -107,16 +108,13 @@ for (let i = 0; i < 1000; i++) {
  * * *******************
  */
 // Show
-const gradientPosition = { value: 800 };
+engine.start();
 const tlShow = new TimelineLite({ delay: 0.2, onStart: () => {
-  engine.start();
+  lineGenerator.start();
 }});
-tlShow.to('._overlay', 2, { opacity: 0 });
-tlShow.to(gradientPosition, 2, { value: 100, onUpdate: () => {
-  document.body.style.background = `radial-gradient(ellipse at ${gradientPosition.value}% 0%, var(--color-bg) 0%, var(--color-bg-2) 80%, var(--color-bg-3) 200%)`;
-}}, 0);
+tlShow.to('.overlay', 2, { opacity: 0 });
+tlShow.to('.background', 2, { y: -300 }, 0);
 tlShow.fromTo(engine.lookAt, 2, { y: -8 }, { y: 0, ease: Power2.easeOut }, 0);
-tlShow.add(lineGenerator.start, 0);
 tlShow.add(text.show, '-=1');
 
 // Hide
@@ -125,5 +123,5 @@ app.onHide((onComplete) => {
   tlHide.to(engine.lookAt, 2, { y: -6, ease: Power3.easeInOut });
   tlHide.add(text.hide, 0);
   tlHide.add(lineGenerator.stop);
-  tlHide.to('._overlay', 0.5, { autoAlpha: 1, onComplete }, '-=1.5');
+  tlHide.to('.overlay', 0.5, { autoAlpha: 1, onComplete }, '-=1.5');
 });

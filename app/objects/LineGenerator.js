@@ -42,7 +42,7 @@ export default class LineGenerator extends Object3D {
    * * *******************
    */
   addLine(props) {
-    const line = new AnimatedMeshLine(Object.assign(this.lineStaticProps, props));
+    const line = new AnimatedMeshLine(Object.assign({}, this.lineStaticProps, props));
     this.lines.push(line);
     this.add(line);
     this.nbrOfLines++;

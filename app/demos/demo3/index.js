@@ -22,7 +22,7 @@ import app from 'App';
  */
 
 @FullScreenInBackground
-@CameraPositionHandlerWithMouse({ x: 4, y: 4 })
+@CameraPositionHandlerWithMouse({ x: 8, y: 8 }, 0.15)
 class CustomEngine extends Engine {}
 
 const engine = new CustomEngine();
@@ -33,10 +33,20 @@ const engine = new CustomEngine();
  * * TITLE
  * * *******************
  */
+class CustomAnimatedText3D extends AnimatedText3D {
+  constructor(props) {
+    super(props);
+    this.t = 0;
+    this.update = this.update.bind(this);
+  }
 
-const text = new AnimatedText3D('Demo', { color: '#0f070a' });
+  update() {
+    this.t += 0.05;
+    this.position.y += (Math.sin(this.t)) * 0.0025;
+  }
+}
+const text = new CustomAnimatedText3D('Energy', { color: '#0f070a' });
 text.position.x -= text.basePosition * 0.5;
-// text.position.y -= 0.5;
 engine.add(text);
 
 
@@ -45,49 +55,56 @@ engine.add(text);
  * * LIGNES
  * * *******************
  */
-
-const COLORS = ['#4062BB', '#52489C'].map((col) => new Color(col));
+const COLORS = ['#FDFFFC', '#FDFFFC', '#FDFFFC', '#FDFFFC', '#EA526F', '#71b9f2'].map((col) => new Color(col));
 const STATIC_PROPS = {
-  width: 0.1,
-  nbrOfPoints: 5,
+  nbrOfPoints: 4,
+  speed: 0.03,
+  turbulence: new Vector3(1, 0.8, 1),
+  orientation: new Vector3(1, 0, 0),
 };
 
 class CustomLineGenerator extends LineGenerator {
-  // start() {
-  //   const currentFreq = this.frequency;
-  //   this.frequency = 1;
-  //   setTimeout(() => {
-  //     this.frequency = currentFreq;
-  //   }, 1000);
-  //   super.start();
-  // }
+  start() {
+    const currentFreq = this.frequency;
+    this.frequency = 1;
+    setTimeout(() => {
+      this.frequency = currentFreq;
+    }, 500);
+    super.start();
+  }
 
   addLine() {
-    super.addLine({
-      length: getRandomFloat(8, 15),
-      visibleLength: getRandomFloat(0.05, 0.2),
-      position: new Vector3(
-        (Math.random() - 0.5) * 1.5,
-        Math.random() - 1,
-        (Math.random() - 0.5) * 2,
-      ).multiplyScalar(getRandomFloat(5, 8)),
-      turbulence: new Vector3(
-        getRandomFloat(-2, 2),
-        getRandomFloat(0, 2),
-        getRandomFloat(-2, 2),
+    const line = super.addLine({
+      width: getRandomFloat(0.1, 0.3),
+      length: getRandomFloat(5, 7),
+      visibleLength: getRandomFloat(0.05, 0.8),
+      position: new Vector3(-3.2,
+        0.3,
+        getRandomFloat(-1, 1),
       ),
-      orientation: new Vector3(
-        getRandomFloat(-0.8, 0.8),
-        1,
-        1,
-      ),
-      speed: getRandomFloat(0.004, 0.008),
       color: getRandomItem(COLORS),
     });
+    line.rotation.x = getRandomFloat(0, Math.PI * 2);
+
+    if (Math.random() > 0.25) {
+      const line = super.addLine({
+        width: getRandomFloat(0.05, 0.1),
+        length: getRandomFloat(5, 10),
+        visibleLength: getRandomFloat(0.05, 0.5),
+        speed: 0.05,
+        position: new Vector3(
+          getRandomFloat(-9, 1),
+          getRandomFloat(-5, 5),
+          getRandomFloat(-10, 6),
+        ),
+        color: getRandomItem(COLORS),
+      });
+      line.rotation.x = getRandomFloat(0, Math.PI * 2);
+    }
   }
 }
 const lineGenerator = new CustomLineGenerator({
-  frequency: 0.5,
+  frequency: 0.05,
 }, STATIC_PROPS);
 engine.add(lineGenerator);
 
@@ -98,12 +115,11 @@ engine.add(lineGenerator);
  */
 // Show
 engine.start();
-const tlShow = new TimelineLite({ delay: 0.2, onStart: () => {
-  lineGenerator.start();
-}});
+const tlShow = new TimelineLite({ delay: 0.2 });
 tlShow.to('.overlay', 0.6, { autoAlpha: 0 });
-tlShow.fromTo(engine.lookAt, 3, { y: -4 }, { y: 0, ease: Power3.easeOut }, '-=0.4');
-tlShow.add(text.show, '-=2');
+tlShow.fromTo(engine.lookAt, 3, { y: -4 }, { y: 0, ease: Power3.easeOut }, 0);
+tlShow.add(lineGenerator.start, '-=2.5');
+tlShow.add(text.show, '-=1.8');
 
 // Hide
 app.onHide((onComplete) => {

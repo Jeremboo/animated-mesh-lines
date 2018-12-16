@@ -82,7 +82,6 @@ export default class AnimatedMeshLine extends Mesh {
     // * Init
     super(geometry, material);
     this.position.copy(position);
-    console.log(this.position)
 
     this.speed = speed;
     this.voidLength = dashArray * dashRatio; // When the visible part is out

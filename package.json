@@ -8,7 +8,7 @@
     "url": "https://jeremieboulay.fr"
   },
   "scripts": {
-    "start": "webpack-dev-server --hot --inline --config config/webpack.dev.js",
+    "start": "webpack-dev-server --config config/webpack.dev.js",
     "build": "webpack --progress --config config/webpack.prod.js"
   },
   "license": "ISC",

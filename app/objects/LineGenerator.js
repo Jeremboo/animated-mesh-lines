@@ -2,7 +2,7 @@ import { Object3D } from 'three';
 import AnimatedMeshLine from './AnimatedMeshLine';
 
 export default class LineGenerator extends Object3D {
-  constructor(lineProps, { frequency = 0.1 } = {}, propertiesToCompute = []) {
+  constructor({ frequency = 0.1 } = {}, lineProps) {
     super();
 
     this.frequency = frequency;

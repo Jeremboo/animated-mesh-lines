@@ -34,7 +34,7 @@ const engine = new CustomEngine();
  * * *******************
  */
 
-const text = new AnimatedText3D('Shooting Stars', { color: '#dc2c5a' });
+const text = new AnimatedText3D('Confettis', { color: '#0f070a' });
 text.position.x -= text.basePosition * 0.5;
 // text.position.y -= 0.5;
 engine.add(text);
@@ -46,14 +46,10 @@ engine.add(text);
  * * *******************
  */
 
-// const COLORS = ['#333333', '#ffffff'].map((col) => new Color(col));
+const COLORS = ['#4062BB', '#52489C', '#59C3C3', '#F45B69', '#F45B69'].map((col) => new Color(col));
 const STATIC_PROPS = {
-  width: 0.05,
-  frequency: 0.5,
-  nbrOfPoints: 1,
-  turbulence: new Vector3(),
-  orientation: new Vector3(-1, -1, 0),
-  color: new Color('#e6e0e3'),
+  width: 0.1,
+  nbrOfPoints: 5,
 };
 
 class CustomLineGenerator extends LineGenerator {
@@ -68,49 +64,52 @@ class CustomLineGenerator extends LineGenerator {
 
   addLine() {
     super.addLine({
-      length: getRandomFloat(5, 10),
+      length: getRandomFloat(8, 15),
       visibleLength: getRandomFloat(0.05, 0.2),
-      speed: getRandomFloat(0.01, 0.02),
       position: new Vector3(
-        getRandomFloat(-4, 8),
-        getRandomFloat(-3, 5),
-        getRandomFloat(-2, 5),
+        (Math.random() - 0.5) * 1.5,
+        Math.random() - 1,
+        (Math.random() - 0.5) * 2,
+      ).multiplyScalar(getRandomFloat(5, 20)),
+      turbulence: new Vector3(
+        getRandomFloat(-2, 2),
+        getRandomFloat(0, 2),
+        getRandomFloat(-2, 2),
       ),
-      // color: getRandomItem(COLORS),
+      orientation: new Vector3(
+        getRandomFloat(-0.8, 0.8),
+        1,
+        1,
+      ),
+      speed: getRandomFloat(0.004, 0.008),
+      color: getRandomItem(COLORS),
     });
   }
 }
-
-const lineGenerator = new CustomLineGenerator(STATIC_PROPS);
+const lineGenerator = new CustomLineGenerator({
+  frequency: 0.5
+}, STATIC_PROPS);
 engine.add(lineGenerator);
-
 
 /**
  * * *******************
  * * START
  * * *******************
  */
-
 // Show
-const tlShow = new TimelineLite({ onStart: () => {
-  engine.start();
+engine.start();
+const tlShow = new TimelineLite({ delay: 0.2, onStart: () => {
+  lineGenerator.start();
 }});
-tlShow.to('._overlay', 0.6, { autoAlpha: 0 });
+tlShow.to('.overlay', 0.6, { autoAlpha: 0 });
 tlShow.fromTo(engine.lookAt, 3, { y: -4 }, { y: 0, ease: Power3.easeOut }, '-=0.4');
-tlShow.add(lineGenerator.start, 0);
 tlShow.add(text.show, '-=2');
 
-const tlHide = new TimelineLite({ paused: true });
-tlHide.to(engine.lookAt, 2, { y: -6, ease: Power3.easeInOut });
-tlHide.add(text.hide, 0);
-tlHide.add(lineGenerator.stop);
-tlHide.to('._overlay', 0.5, { autoAlpha: 1 }, '-=1.5');
-
-
+// Hide
 app.onHide((onComplete) => {
   const tlHide = new TimelineLite();
   tlHide.to(engine.lookAt, 2, { y: -6, ease: Power3.easeInOut });
   tlHide.add(text.hide, 0);
   tlHide.add(lineGenerator.stop);
-  tlHide.to('._overlay', 0.5, { autoAlpha: 1, onComplete }, '-=1.5');
+  tlHide.to('.overlay', 0.5, { autoAlpha: 1, onComplete }, '-=1.5');
 });

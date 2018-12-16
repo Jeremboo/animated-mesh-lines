@@ -45,7 +45,6 @@ engine.add(text);
  */
 const STATIC_PROPS = {
   width: 0.05,
-  frequency: 0.5,
   nbrOfPoints: 1,
   turbulence: new Vector3(),
   orientation: new Vector3(-1, -1, 0),
@@ -66,7 +65,7 @@ class CustomLineGenerator extends LineGenerator {
     });
   }
 }
-const lineGenerator = new CustomLineGenerator(STATIC_PROPS);
+const lineGenerator = new CustomLineGenerator({ frequency: 0.1 }, STATIC_PROPS);
 engine.add(lineGenerator);
 
 

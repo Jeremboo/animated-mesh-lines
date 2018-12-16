@@ -86,10 +86,25 @@ a:focus {
 	left: 50%;
 	transform: translate(-50%, 0);
 }
+/*
+.frame__demo:after {
+	content: '';
+	position:absolute;
+	bottom: 0;
+	left: 0;
+	width: 0%;
+	height: 2px;
+	background-color: var(--color-text);
+	transition: width 0.2s;
+} */
 
 .frame__demo--current,
-.frame__demo--current:hover {
+.frame__demo:hover {
 	color: var(--color-text);
+}
+.frame__demo--current {
+	border-bottom: 2px solid var(--color-text);
+	transform: none;
 }
 
 .content {

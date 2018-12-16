@@ -8,7 +8,7 @@ export default class Engine {
     this.height = h;
     this.meshCount = 0;
     this.meshListeners = [];
-    this.devicePixelRatio = window.devicePixelRatio || 1;
+    this.devicePixelRatio = window.devicePixelRatio ? Math.min(1.6, window.devicePixelRatio) : 1;
     this.renderer = new WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setPixelRatio(this.devicePixelRatio);
     if (backgroundColor !== undefined) this.renderer.setClearColor(new Color(backgroundColor));

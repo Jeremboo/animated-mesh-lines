@@ -1,0 +1,17 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "useBuiltIns": "entry",
+      "targets": {
+        "browsers": [
+          "last 2 versions",
+          "IE >= 9"
+        ]
+      }
+    }]
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "legacy": true }]
+  ],
+  "env": {}
+}

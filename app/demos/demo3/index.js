@@ -86,14 +86,14 @@ class CustomLineGenerator extends LineGenerator {
     });
     line.rotation.x = getRandomFloat(0, Math.PI * 2);
 
-    if (Math.random() > 0.25) {
+    if (Math.random() > 0.1) {
       const line = super.addLine({
         width: getRandomFloat(0.05, 0.1),
         length: getRandomFloat(5, 10),
         visibleLength: getRandomFloat(0.05, 0.5),
         speed: 0.05,
         position: new Vector3(
-          getRandomFloat(-9, 1),
+          getRandomFloat(-9, 5),
           getRandomFloat(-5, 5),
           getRandomFloat(-10, 6),
         ),
@@ -104,7 +104,7 @@ class CustomLineGenerator extends LineGenerator {
   }
 }
 const lineGenerator = new CustomLineGenerator({
-  frequency: 0.05,
+  frequency: 0.1,
 }, STATIC_PROPS);
 engine.add(lineGenerator);
 

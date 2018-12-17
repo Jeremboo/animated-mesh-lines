@@ -1,5 +1,5 @@
 import { Object3D, ShapeGeometry, MeshBasicMaterial, Mesh, FontLoader } from 'three';
-import { TimelineLite } from 'gsap';
+import { TimelineLite, Back } from 'gsap';
 
 import fontFile from 'utils/fontFile';
 

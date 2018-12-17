@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 
 const webpack = require('webpack');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const poststylus = require('poststylus');
 
@@ -15,7 +14,6 @@ const demosPath = path.resolve(__dirname, '../app/demos');
 // Init props
 const entries = {};
 const plugins = [
-  new CleanWebpackPlugin([distPath]),
   new webpack.LoaderOptionsPlugin({
     debug: true,
     options: {
@@ -35,15 +33,11 @@ dirs.forEach(dir => {
   // Add an html webpack plugin for each entry
   plugins.push(new HtmlWebpackPlugin({
     // inject: false,
-    chunks: [dir],
+    chunks: [dir, 'vendors'],
     filename: `${distPath}/${dir}.html`,
     template: `${demosPath}/${dir}/index.html`,
   }));
-  console.log(`${distPath}/${dir}.html`);
 });
-
-console.log(plugins);
-
 
 // * WEBPACK CONFIG
 module.exports = {

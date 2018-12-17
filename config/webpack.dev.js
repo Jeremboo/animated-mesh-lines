@@ -1,5 +1,7 @@
 const webpack = require('webpack');
 const ip = require('ip');
+const merge = require('webpack-merge');
+
 const webpackCommunConfig = require('./webpack.commun');
 
 
@@ -7,10 +9,15 @@ const port = 3333;
 const ipAdress = ip.address() + ':' + port;
 // const myLocalIp = 'http://' + ipAdress + '/';
 
-webpackCommunConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-webpackCommunConfig.output.devtoolModuleFilenameTemplate = 'webpack:///[absolute-resource-path]';
-
-module.exports = Object.assign({
+// MERGE
+module.exports = merge(webpackCommunConfig, {
+  mode: 'development',
+  output: {
+    devtoolModuleFilenameTemplate: 'webpack:///[absolute-resource-path]',
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   devtool: 'eval-source-map',
   // devtool: 'inline-source-map',
   devServer: {
@@ -29,5 +36,4 @@ module.exports = Object.assign({
     // Release of webpack-dev-server 2.4.3 => https://github.com/webpack/webpack-dev-server/issues/882
     public: ipAdress,
   },
-}, webpackCommunConfig);
-
+});

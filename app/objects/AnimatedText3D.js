@@ -7,7 +7,7 @@ const fontLoader = new FontLoader();
 const font = fontLoader.parse(fontFile);
 
 export default class AnimatedText3D extends Object3D {
-  constructor(text, { size = 0.8, letterSpacing = 0.03, color = '#000000', duration = 0.6 } = {}) {
+  constructor(text, { size = 0.8, letterSpacing = 0.03, color = '#000000', duration = 0.6, opacity = 1 } = {}) {
     super();
 
     this.basePosition = 0;
@@ -44,7 +44,7 @@ export default class AnimatedText3D extends Object3D {
         position: -0.5,
       };
       this.tm.to(data, duration, {
-        opacity: 1,
+        opacity,
         position: 0,
         ease: Back.easeOut.config(2),
         onUpdate: () => {

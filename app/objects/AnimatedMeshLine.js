@@ -8,50 +8,58 @@ import getRandomFloat from 'utils/getRandomFloat';
 
 export default class AnimatedMeshLine extends Mesh {
   constructor({
-    // Geometry props
     width = 0.1,
-    length = 2,
-    nbrOfPoints = 3,
-    position = new Vector3(0, 0, 0),
-    orientation = new Vector3(1, 0, 0),
-    turbulence = new Vector3(0, 0, 0),
-    // Material props
+    speed = 0.01,
     visibleLength = 0.5,
     color = new Color('#000000'),
-    // Animation Props
-    speed = 0.01,
+    opacity = 1,
+    position = new Vector3(0, 0, 0),
+
+    // Array of points already done
+    points = false,
+    // Params to create the array of points
+    length = 2,
+    nbrOfPoints = 3,
+    orientation = new Vector3(1, 0, 0),
+    turbulence = new Vector3(0, 0, 0),
+    transformLineMethod = false,
   } = {}) {
     // * ******************************
     // * Create the main line
-    const points = [];
-    const currentPoint = new Vector3();
-    // The size of each segment oriented in the good directon
-    const segment = orientation.normalize().multiplyScalar(length / nbrOfPoints);
-    points.push(currentPoint.clone());
-    for (let i = 0; i < nbrOfPoints - 1; i++) {
-      // Increment the point depending to the orientation
-      currentPoint.add(segment);
-      // Add turbulence to the current point
-      points.push(currentPoint.clone().set(
-        currentPoint.x + getRandomFloat(-turbulence.x, turbulence.x),
-        currentPoint.y + getRandomFloat(-turbulence.y, turbulence.y),
-        currentPoint.z + getRandomFloat(-turbulence.z, turbulence.z),
-      ));
+    let linePoints = [];
+    if (!points) {
+      const currentPoint = new Vector3();
+      // The size of each segment oriented in the good directon
+      const segment = orientation.normalize().multiplyScalar(length / nbrOfPoints);
+      linePoints.push(currentPoint.clone());
+      for (let i = 0; i < nbrOfPoints - 1; i++) {
+        // Increment the point depending to the orientation
+        currentPoint.add(segment);
+        // Add turbulence to the current point
+        linePoints.push(currentPoint.clone().set(
+          currentPoint.x + getRandomFloat(-turbulence.x, turbulence.x),
+          currentPoint.y + getRandomFloat(-turbulence.y, turbulence.y),
+          currentPoint.z + getRandomFloat(-turbulence.z, turbulence.z),
+        ));
+      }
+      // Finish the curve to the correct point without turbulence
+      linePoints.push(currentPoint.add(segment).clone());
+      // * ******************************
+      // * Smooth the line
+      // TODO 3D spline curve https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
+      // TODO https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_nurbs.html
+      const curve = new SplineCurve(linePoints);
+      linePoints = new Geometry().setFromPoints(curve.getPoints(50));
+    } else {
+      linePoints = points;
     }
-    // Finish the curve to the correct point without turbulence
-    points.push(currentPoint.add(segment).clone());
 
-    // * ******************************
-    // * Smooth the line
-    // TODO 3D spline curve https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-    // TODO https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_nurbs.html
-    const curve = new SplineCurve(points);
-    const curvedPoints = curve.getPoints(50);
+
 
     // * ******************************
     // * Create the MeshLineGeometry
     const line = new MeshLine();
-    line.setGeometry(new Geometry().setFromPoints(curvedPoints));
+    line.setGeometry(linePoints, transformLineMethod);
     const geometry = line.geometry;
 
     // * ******************************
@@ -72,7 +80,7 @@ export default class AnimatedMeshLine extends Mesh {
       dashArray,
       dashOffset,
       dashRatio, // The ratio between that is visible or not for each dash
-      opacity: 1,
+      opacity,
       transparent: true,
       depthWrite: false,
       color,

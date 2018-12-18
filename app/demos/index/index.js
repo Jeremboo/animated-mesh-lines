@@ -8,6 +8,7 @@ import FullScreenInBackground from 'decorators/FullScreenInBackground';
 import Engine from 'utils/engine';
 import AnimatedText3D from 'objects/AnimatedText3D';
 import LineGenerator from 'objects/LineGenerator';
+import Stars from 'objects/Stars';
 
 import getRandomFloat from 'utils/getRandomFloat';
 
@@ -74,32 +75,8 @@ engine.add(lineGenerator);
  * * STARS
  * * *******************
  */
-const starGeometry = new SphereGeometry(0.5, 2, 2);
-const starMaterial = new MeshBasicMaterial({ color: 0xECF0F1, transparent: true, opacity: 0.3 });
-class Star extends Mesh {
-  constructor() {
-    super(starGeometry, starMaterial);
-
-    this.t = Math.random() * 10;
-    this.position.set(
-      Math.random() - 0.5,
-      Math.random() - 0.5,
-      -Math.random() * 0.5
-    ).normalize().multiplyScalar(getRandomFloat(100, 300));
-
-    this.update = this.update.bind(this);
-  }
-
-  update() {
-    this.t += 0.01;
-    this.scale.x = this.scale.y = this.scale.z = Math.sin( this.t ) + 1;
-  }
-}
-// TODO make instancied Stars
-for (let i = 0; i < 300; i++) {
-  const star = new Star();
-  engine.add(star);
-}
+const stars = new Stars();
+engine.add(stars);
 
 /**
  * * *******************

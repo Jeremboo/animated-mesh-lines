@@ -47,7 +47,7 @@ class CustomAnimatedText3D extends AnimatedText3D {
 }
 const text = new CustomAnimatedText3D('Energy', { color: '#0f070a' });
 text.position.x -= text.basePosition * 0.5;
-engine.add(text);
+text.position.y += 0.15;
 
 
 /**
@@ -61,6 +61,10 @@ const STATIC_PROPS = {
   speed: 0.03,
   turbulence: new Vector3(1, 0.8, 1),
   orientation: new Vector3(1, 0, 0),
+  transformLineMethod: p => {
+    const a = ((0.5 - Math.abs(0.5 - p)) * 3);
+    return a;
+  }
 };
 
 class CustomLineGenerator extends LineGenerator {
@@ -119,7 +123,10 @@ const tlShow = new TimelineLite({ delay: 0.2 });
 tlShow.to('.overlay', 0.6, { autoAlpha: 0 });
 tlShow.fromTo(engine.lookAt, 3, { y: -4 }, { y: 0, ease: Power3.easeOut }, 0);
 tlShow.add(lineGenerator.start, '-=2.5');
-tlShow.add(text.show, '-=1.8');
+tlShow.add(() => {
+  engine.add(text);
+  text.show();
+}, '-=1.6');
 
 // Hide
 app.onHide((onComplete) => {

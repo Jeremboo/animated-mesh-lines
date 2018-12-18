@@ -32,7 +32,7 @@ export default class LineGenerator extends Object3D {
   }
 
   stop(callback) {
-    this.isStarted = true;
+    this.isStarted = false;
     // TODO callback when all lines are hidden
   }
 

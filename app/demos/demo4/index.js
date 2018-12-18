@@ -13,6 +13,7 @@ import getRandomItem from 'utils/getRandomItem';
 
 import CameraPositionHandlerWithMouse from 'decorators/CameraPositionHandlerWithMouse';
 import FullScreenInBackground from 'decorators/FullScreenInBackground';
+import PostProcessing from 'decorators/PostProcessing';
 
 import app from 'App';
 
@@ -26,11 +27,18 @@ import './style.styl';
  */
 
 @FullScreenInBackground
+@PostProcessing
 @CameraPositionHandlerWithMouse({ x: 1, y: 1 }, 0.1)
 class CustomEngine extends Engine {}
 
 const engine = new CustomEngine();
 engine.camera.position.z = 2;
+engine.addBloomEffect({
+  resolutionScale: 0.5,
+  kernelSize: 4,
+  distinction: 0.01,
+}, 1);
+
 
 
 /**
@@ -38,11 +46,8 @@ engine.camera.position.z = 2;
  * * TITLE
  * * *******************
  */
-const text = new AnimatedText3D('Night Sky', { color: '#FFFAFF', size: 0.2, opacity: 0.9 });
+const text = new AnimatedText3D('Boreal Sky', { color: '#FFFFFF', size: 0.1, wireframe: true, opacity: 1, });
 text.position.x -= text.basePosition * 0.5;
-text.position.y = 0.3;
-text.position.z = -1;
-text.lookAt(engine.camera.position);
 engine.add(text);
 
 /**
@@ -52,7 +57,7 @@ engine.add(text);
  */
 const stars = new Stars();
 stars.update = () => {
-  stars.rotation.y -= 0.0002;
+  stars.rotation.y -= 0.0004;
   stars.rotation.x -= 0.0002;
 };
 engine.add(stars);
@@ -114,19 +119,17 @@ class CustomLineGenerator extends LineGenerator {
       super.addLine({
         visibleLength: getRandomFloat(0.01, 0.2),
         points,
-        speed: getRandomFloat(0.001, 0.008),
+        speed: getRandomFloat(0.003, 0.008),
         color: getRandomItem(COLORS),
-        width: getRandomFloat(0.01, 0.15),
-        opacity: getRandomFloat(0.2, 0.7),
+        width: getRandomFloat(0.01, 0.1),
       });
     } else {
       // Fast lines
       super.addLine({
-        visibleLength: getRandomFloat(0.05, 0.3),
+        visibleLength: getRandomFloat(0.05, 0.2),
         points,
         speed: getRandomFloat(0.01, 0.1),
         color: COLORS[0],
-        opacity: getRandomFloat(0.5, 1),
         width: getRandomFloat(0.01, 0.01),
       });
     }
@@ -148,8 +151,8 @@ engine.start();
 const tlShow = new TimelineLite({ delay: 0.2, onStart: () => {
   lineGenerator.start();
 }});
-tlShow.to('.overlay', 0.6, { autoAlpha: 0 });
-tlShow.fromTo(engine.lookAt, 3, { y: -4 }, { y: 0, ease: Power3.easeOut }, '-=0.4');
+tlShow.to('.overlay', 2, { autoAlpha: 0 });
+tlShow.fromTo(engine.lookAt, 3, { y: -4 }, { y: 0, ease: Power3.easeOut }, '-=2');
 tlShow.add(text.show, '-=2');
 
 // Hide

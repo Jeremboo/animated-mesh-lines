@@ -20,9 +20,6 @@ export default class Engine {
 
     this.update = this.update.bind(this);
     this.resize = this.resize.bind(this);
-
-    // Resize
-    this.resize(w, h);
   }
 
   /**
@@ -48,27 +45,31 @@ export default class Engine {
     this.update();
   }
 
-  /**
-   * * *******************
-   * * UPDATE
-   * * *******************
-   */
+  // Update render
   update() {
     let i = this.meshCount;
     while (--i >= 0) {
       this.meshListeners[i].apply(this, null);
     }
-    this.renderer.render(this.scene, this.camera);
-
+    this.render();
     // Loop
     requestAnimationFrame(this.update);
   }
 
+  render() {
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  // Resize
   resize(w, h) {
     this.width = w;
     this.height = h;
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
+    this.resizeRender();
+  }
+
+  resizeRender() {
     this.renderer.setSize(this.width, this.height);
   }
 }

@@ -14,6 +14,7 @@ export default (Target) => class FullScreenInBackground extends Target {
 
     window.addEventListener('resize', this.resize);
     window.addEventListener('orientationchange', this.resize);
+    this.resize();
   }
 
   resize() {

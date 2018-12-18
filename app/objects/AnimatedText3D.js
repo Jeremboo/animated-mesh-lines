@@ -7,7 +7,7 @@ const fontLoader = new FontLoader();
 const font = fontLoader.parse(fontFile);
 
 export default class AnimatedText3D extends Object3D {
-  constructor(text, { size = 0.8, letterSpacing = 0.03, color = '#000000', duration = 0.6, opacity = 1 } = {}) {
+  constructor(text, { size = 0.8, letterSpacing = 0.03, color = '#000000', duration = 0.6, opacity = 1, wireframe = false } = {}) {
     super();
 
     this.basePosition = 0;
@@ -26,6 +26,7 @@ export default class AnimatedText3D extends Object3D {
           color,
           opacity: 0,
           transparent: true,
+          wireframe,
         });
         const mesh = new Mesh(geom, mat);
 

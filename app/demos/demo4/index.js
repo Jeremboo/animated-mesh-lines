@@ -1,8 +1,10 @@
-import '../../base.css';
-import './style.styl';
+import {
+  Color, Vector3, SphereBufferGeometry,
+  Mesh, Raycaster, MeshBasicMaterial,
+} from 'three';
 
-import { Color, Vector3 } from 'three';
 import Engine from 'utils/engine';
+import Stars from 'objects/Stars';
 import AnimatedText3D from 'objects/AnimatedText3D';
 import LineGenerator from 'objects/LineGenerator';
 
@@ -14,6 +16,8 @@ import FullScreenInBackground from 'decorators/FullScreenInBackground';
 
 import app from 'App';
 
+import '../../base.css';
+import './style.styl';
 
 /**
  * * *******************
@@ -22,10 +26,11 @@ import app from 'App';
  */
 
 @FullScreenInBackground
-@CameraPositionHandlerWithMouse({ x: 4, y: 4 })
+@CameraPositionHandlerWithMouse({ x: 1, y: 1 }, 0.1)
 class CustomEngine extends Engine {}
 
 const engine = new CustomEngine();
+engine.camera.position.z = 2;
 
 
 /**
@@ -33,12 +38,24 @@ const engine = new CustomEngine();
  * * TITLE
  * * *******************
  */
-
-const text = new AnimatedText3D('Demo 4', { color: '#0f070a' });
+const text = new AnimatedText3D('Night Sky', { color: '#FFFAFF', size: 0.2, opacity: 0.9 });
 text.position.x -= text.basePosition * 0.5;
-// text.position.y -= 0.5;
+text.position.y = 0.3;
+text.position.z = -1;
+text.lookAt(engine.camera.position);
 engine.add(text);
 
+/**
+ * * *******************
+ * * STARS
+ * * *******************
+ */
+const stars = new Stars();
+stars.update = () => {
+  stars.rotation.y -= 0.0002;
+  stars.rotation.x -= 0.0002;
+};
+engine.add(stars);
 
 /**
  * * *******************
@@ -46,50 +63,80 @@ engine.add(text);
  * * *******************
  */
 
-const COLORS = ['#4062BB', '#52489C'].map((col) => new Color(col));
+const radius = 4;
+const origin = new Vector3();
+const direction = new Vector3();
+const raycaster = new Raycaster();
+const geometry = new SphereBufferGeometry(radius, 32, 32, 0, 3.2, 4, 2.1);
+const material = new MeshBasicMaterial({ wireframe: true, visible: false });
+const sphere = new Mesh(geometry, material);
+engine.add(sphere);
+sphere.position.z = 2;
+
+const COLORS = ['#FFFAFF', '#0A2463', '#3E92CC', '#723bb7', '#efd28e', '#3f9d8c'].map((col) => new Color(col));
 const STATIC_PROPS = {
-  width: 0.1,
-  nbrOfPoints: 5,
+  transformLineMethod: p => p,
 };
 
 class CustomLineGenerator extends LineGenerator {
-  // start() {
-  //   const currentFreq = this.frequency;
-  //   this.frequency = 1;
-  //   setTimeout(() => {
-  //     this.frequency = currentFreq;
-  //   }, 1000);
-  //   super.start();
-  // }
-
   addLine() {
-    super.addLine({
-      length: getRandomFloat(8, 15),
-      visibleLength: getRandomFloat(0.05, 0.2),
-      position: new Vector3(
-        (Math.random() - 0.5) * 1.5,
-        Math.random() - 1,
-        (Math.random() - 0.5) * 2,
-      ).multiplyScalar(getRandomFloat(5, 8)),
-      turbulence: new Vector3(
-        getRandomFloat(-2, 2),
-        getRandomFloat(0, 2),
-        getRandomFloat(-2, 2),
-      ),
-      orientation: new Vector3(
-        getRandomFloat(-0.8, 0.8),
-        1,
-        1,
-      ),
-      speed: getRandomFloat(0.004, 0.008),
-      color: getRandomItem(COLORS),
-    });
+    // V1 Regular and symetric lines ---------------------------------------------
+    // i += 0.1;
+    // let a = i;
+    // let y = 12;
+    // let incrementation = 0.1;
+    // V2 ---------------------------------------------
+    let incrementation = 0.1;
+    let y = getRandomFloat(-radius * 0.6, radius * 1.8);
+    let a = Math.PI * (-25) / 180;
+    let aMax = Math.PI * (200) / 180;
+
+    const points = [];
+    while (a < aMax) {
+      a += 0.2;
+      y -= incrementation;
+      origin.set(radius * Math.cos(a), y, radius * Math.sin(a));
+      direction.set(-origin.x, 0, -origin.z);
+      direction.normalize();
+      raycaster.set(origin, direction);
+
+      // save the points
+      const intersect = raycaster.intersectObject(sphere, true);
+      if (intersect.length) {
+        points.push(intersect[0].point.x, intersect[0].point.y, intersect[0].point.z);
+      }
+    }
+
+    if (points.length === 0) return;
+
+    if (Math.random() > 0.5) {
+      // Low lines
+      super.addLine({
+        visibleLength: getRandomFloat(0.01, 0.2),
+        points,
+        speed: getRandomFloat(0.001, 0.008),
+        color: getRandomItem(COLORS),
+        width: getRandomFloat(0.01, 0.15),
+        opacity: getRandomFloat(0.2, 0.7),
+      });
+    } else {
+      // Fast lines
+      super.addLine({
+        visibleLength: getRandomFloat(0.05, 0.3),
+        points,
+        speed: getRandomFloat(0.01, 0.1),
+        color: COLORS[0],
+        opacity: getRandomFloat(0.5, 1),
+        width: getRandomFloat(0.01, 0.01),
+      });
+    }
   }
 }
 const lineGenerator = new CustomLineGenerator({
-  frequency: 0.5,
+  frequency: 0.99,
 }, STATIC_PROPS);
 engine.add(lineGenerator);
+
 
 /**
  * * *******************

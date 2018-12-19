@@ -1,7 +1,7 @@
-import '../../base.css';
-import './style.styl';
+import {
+  Color,
+} from 'three';
 
-import { Color, Vector3 } from 'three';
 import Engine from 'utils/engine';
 import AnimatedText3D from 'objects/AnimatedText3D';
 import LineGenerator from 'objects/LineGenerator';
@@ -14,6 +14,8 @@ import FullScreenInBackground from 'decorators/FullScreenInBackground';
 
 import app from 'App';
 
+import '../../base.css';
+import './style.styl';
 
 /**
  * * *******************
@@ -22,23 +24,21 @@ import app from 'App';
  */
 
 @FullScreenInBackground
-@CameraPositionHandlerWithMouse({ x: 4, y: 4 })
+@CameraPositionHandlerWithMouse({ x: 1, y: 1 }, 0.1)
 class CustomEngine extends Engine {}
-
 const engine = new CustomEngine();
-
+engine.camera.position.z = 6;
 
 /**
  * * *******************
  * * TITLE
  * * *******************
  */
-
-const text = new AnimatedText3D('Demo 5', { color: '#0f070a' });
-text.position.x -= text.basePosition * 0.5;
-// text.position.y -= 0.5;
-engine.add(text);
-
+const text = new AnimatedText3D('Colors', { color: '#ffffff', size: 0.4, wireframe: false, opacity: 1, });
+text.position.x -= text.basePosition * 0.55;
+text.position.y = -0.9;
+text.position.z = 2;
+text.rotation.x = -0.1;
 
 /**
  * * *******************
@@ -46,48 +46,57 @@ engine.add(text);
  * * *******************
  */
 
-const COLORS = ['#4062BB', '#52489C'].map((col) => new Color(col));
+const RADIUS_START = 0.3;
+const RADIUS_START_MIN = 0.1;
+const Z_MIN = -1;
+
+const Z_INCREMENT = 0.08;
+const ANGLE_INCREMENT = 0.025;
+const RADIUS_INCREMENT = 0.02;
+
+const COLORS = ['#dc202e', '#f7ed99', '#2d338b', '#76306b', '#ea8c2d'].map((col) => new Color(col));
 const STATIC_PROPS = {
-  width: 0.1,
-  nbrOfPoints: 5,
+  transformLineMethod: p => p * 1.5,
 };
 
+const position = { x: 0, y: 0, z: 0 };
 class CustomLineGenerator extends LineGenerator {
-  // start() {
-  //   const currentFreq = this.frequency;
-  //   this.frequency = 1;
-  //   setTimeout(() => {
-  //     this.frequency = currentFreq;
-  //   }, 1000);
-  //   super.start();
-  // }
-
   addLine() {
+    if (this.lines.length > 400) return;
+
+    let z = Z_MIN;
+    let radius = (Math.random() > 0.8) ? RADIUS_START_MIN : RADIUS_START;
+    let angle = getRandomFloat(0, Math.PI * 2);
+
+    const points = [];
+    while (z < engine.camera.position.z) {
+      position.x = Math.cos(angle) * radius;
+      position.y = Math.sin(angle) * radius;
+      position.z = z;
+
+      // incrementation
+      z += Z_INCREMENT;
+      angle += ANGLE_INCREMENT;
+      radius += RADIUS_INCREMENT;
+
+      // push
+      points.push(position.x, position.y, position.z);
+    }
+
+    // Low lines
     super.addLine({
-      length: getRandomFloat(8, 15),
-      visibleLength: getRandomFloat(0.05, 0.2),
-      position: new Vector3(
-        (Math.random() - 0.5) * 1.5,
-        Math.random() - 1,
-        (Math.random() - 0.5) * 2,
-      ).multiplyScalar(getRandomFloat(5, 8)),
-      turbulence: new Vector3(
-        getRandomFloat(-2, 2),
-        getRandomFloat(0, 2),
-        getRandomFloat(-2, 2),
-      ),
-      orientation: new Vector3(
-        getRandomFloat(-0.8, 0.8),
-        1,
-        1,
-      ),
-      speed: getRandomFloat(0.004, 0.008),
+      visibleLength: getRandomFloat(0.1, 0.4),
+      // visibleLength: 1,
+      points,
+      // speed: getRandomFloat(0.001, 0.002),
+      speed: getRandomFloat(0.001, 0.005),
       color: getRandomItem(COLORS),
+      width: getRandomFloat(0.01, 0.06),
     });
   }
 }
 const lineGenerator = new CustomLineGenerator({
-  frequency: 0.5,
+  frequency: 0.9,
 }, STATIC_PROPS);
 engine.add(lineGenerator);
 
@@ -101,15 +110,16 @@ engine.start();
 const tlShow = new TimelineLite({ delay: 0.2, onStart: () => {
   lineGenerator.start();
 }});
-tlShow.to('.overlay', 0.6, { autoAlpha: 0 });
-tlShow.fromTo(engine.lookAt, 3, { y: -4 }, { y: 0, ease: Power3.easeOut }, '-=0.4');
-tlShow.add(text.show, '-=2');
+tlShow.to('.overlay', 5, { autoAlpha: 0 });
+tlShow.add(() => {
+  engine.add(text);
+  text.show();
+}, '-=2');
 
 // Hide
 app.onHide((onComplete) => {
   const tlHide = new TimelineLite();
-  tlHide.to(engine.lookAt, 2, { y: -6, ease: Power3.easeInOut });
+  tlHide.to('.overlay', 0.5, { autoAlpha: 1, onComplete }, 0.1);
   tlHide.add(text.hide, 0);
   tlHide.add(lineGenerator.stop);
-  tlHide.to('.overlay', 0.5, { autoAlpha: 1, onComplete }, '-=1.5');
 });

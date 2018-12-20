@@ -1,8 +1,8 @@
 
-import { Color, Vector3, SphereGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Color, Vector3 } from 'three';
 import { TimelineLite } from 'gsap';
 
-import CameraPositionHandlerWithMouse from 'decorators/CameraPositionHandlerWithMouse';
+import HandleCameraOrbit from 'decorators/HandleCameraOrbit';
 import FullScreenInBackground from 'decorators/FullScreenInBackground';
 
 import Engine from 'utils/engine';
@@ -22,7 +22,7 @@ import './style.styl';
  * * *******************
  */
 @FullScreenInBackground
-@CameraPositionHandlerWithMouse({ x: 2, y: 3 }, 0.05)
+@HandleCameraOrbit({ x: 2, y: 3 }, 0.05)
 class CustomEngine extends Engine {}
 
 const engine = new CustomEngine();
@@ -33,7 +33,7 @@ const engine = new CustomEngine();
  * * TITLE
  * * *******************
  */
-const text = new AnimatedText3D('Shooting Stars', { color: '#dc2c5a' });
+const text = new AnimatedText3D('Shooting Stars', { color: '#dc2c5a', size: app.isMobile ? 0.4 : 0.8 });
 text.position.x -= text.basePosition * 0.5;
 // text.position.y -= 0.5;
 engine.add(text);

@@ -11,7 +11,7 @@ import LineGenerator from 'objects/LineGenerator';
 import getRandomFloat from 'utils/getRandomFloat';
 import getRandomItem from 'utils/getRandomItem';
 
-import CameraPositionHandlerWithMouse from 'decorators/CameraPositionHandlerWithMouse';
+import HandleCameraOrbit from 'decorators/HandleCameraOrbit';
 import FullScreenInBackground from 'decorators/FullScreenInBackground';
 import PostProcessing from 'decorators/PostProcessing';
 
@@ -28,7 +28,7 @@ import './style.styl';
 
 @FullScreenInBackground
 @PostProcessing
-@CameraPositionHandlerWithMouse({ x: 1, y: 1 }, 0.1)
+@HandleCameraOrbit({ x: 1, y: 1 }, 0.1)
 class CustomEngine extends Engine {}
 
 const engine = new CustomEngine();
@@ -46,7 +46,7 @@ engine.addBloomEffect({
  * * TITLE
  * * *******************
  */
-const text = new AnimatedText3D('Boreal Sky', { color: '#FFFFFF', size: 0.1, wireframe: true, opacity: 1, });
+const text = new AnimatedText3D('Boreal Sky', { color: '#FFFFFF', size: app.isMobile ? 0.08 : 0.1, wireframe: true, opacity: 1, });
 text.position.x -= text.basePosition * 0.5;
 engine.add(text);
 

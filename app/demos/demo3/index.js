@@ -9,7 +9,7 @@ import LineGenerator from 'objects/LineGenerator';
 import getRandomFloat from 'utils/getRandomFloat';
 import getRandomItem from 'utils/getRandomItem';
 
-import CameraPositionHandlerWithMouse from 'decorators/CameraPositionHandlerWithMouse';
+import HandleCameraOrbit from 'decorators/HandleCameraOrbit';
 import FullScreenInBackground from 'decorators/FullScreenInBackground';
 
 import app from 'App';
@@ -22,7 +22,7 @@ import app from 'App';
  */
 
 @FullScreenInBackground
-@CameraPositionHandlerWithMouse({ x: 8, y: 8 }, 0.15)
+@HandleCameraOrbit({ x: 8, y: 8 }, 0.15)
 class CustomEngine extends Engine {}
 
 const engine = new CustomEngine();
@@ -34,8 +34,8 @@ const engine = new CustomEngine();
  * * *******************
  */
 class CustomAnimatedText3D extends AnimatedText3D {
-  constructor(props) {
-    super(props);
+  constructor(...props) {
+    super(...props);
     this.t = 0;
     this.update = this.update.bind(this);
   }
@@ -45,7 +45,7 @@ class CustomAnimatedText3D extends AnimatedText3D {
     this.position.y += (Math.sin(this.t)) * 0.0025;
   }
 }
-const text = new CustomAnimatedText3D('Energy', { color: '#0f070a' });
+const text = new CustomAnimatedText3D('Energy', { color: '#0f070a', size: app.isMobile ? 0.6 : 0.8 });
 text.position.x -= text.basePosition * 0.5;
 text.position.y += 0.15;
 
@@ -67,6 +67,10 @@ const STATIC_PROPS = {
   }
 };
 
+const POSITION_X = app.isMobile ? -1.8 : -3.2;
+
+const LENGTH_MIN = app.isMobile ? 3.25 : 5;
+const LENGTH_MAX = app.isMobile ? 3.7 : 7;
 class CustomLineGenerator extends LineGenerator {
   start() {
     const currentFreq = this.frequency;
@@ -80,9 +84,10 @@ class CustomLineGenerator extends LineGenerator {
   addLine() {
     const line = super.addLine({
       width: getRandomFloat(0.1, 0.3),
-      length: getRandomFloat(5, 7),
+      length: getRandomFloat(LENGTH_MIN, LENGTH_MAX),
       visibleLength: getRandomFloat(0.05, 0.8),
-      position: new Vector3(-3.2,
+      position: new Vector3(
+        POSITION_X,
         0.3,
         getRandomFloat(-1, 1),
       ),

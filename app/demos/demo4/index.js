@@ -9,7 +9,7 @@ import LineGenerator from 'objects/LineGenerator';
 import getRandomFloat from 'utils/getRandomFloat';
 import getRandomItem from 'utils/getRandomItem';
 
-import CameraPositionHandlerWithMouse from 'decorators/CameraPositionHandlerWithMouse';
+import HandleCameraOrbit from 'decorators/HandleCameraOrbit';
 import FullScreenInBackground from 'decorators/FullScreenInBackground';
 
 import app from 'App';
@@ -24,7 +24,7 @@ import './style.styl';
  */
 
 @FullScreenInBackground
-@CameraPositionHandlerWithMouse({ x: 1, y: 1 }, 0.1)
+@HandleCameraOrbit({ x: 1, y: 1 }, 0.1)
 class CustomEngine extends Engine {}
 const engine = new CustomEngine();
 engine.camera.position.z = 6;
@@ -34,9 +34,9 @@ engine.camera.position.z = 6;
  * * TITLE
  * * *******************
  */
-const text = new AnimatedText3D('Colors', { color: '#ffffff', size: 0.4, wireframe: false, opacity: 1, });
-text.position.x -= text.basePosition * 0.55;
-text.position.y = -0.9;
+const text = new AnimatedText3D('Colors', { color: '#ffffff', size: app.isMobile ? 0.4 : 0.4, wireframe: false, opacity: 1, });
+text.position.x = -text.basePosition * (app.isMobile ? 0.5 : 0.55);
+text.position.y = (app.isMobile ? -1.2 : -0.9);
 text.position.z = 2;
 text.rotation.x = -0.1;
 

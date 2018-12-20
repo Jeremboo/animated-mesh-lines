@@ -9,7 +9,7 @@ import LineGenerator from 'objects/LineGenerator';
 import getRandomFloat from 'utils/getRandomFloat';
 import getRandomItem from 'utils/getRandomItem';
 
-import CameraPositionHandlerWithMouse from 'decorators/CameraPositionHandlerWithMouse';
+import HandleCameraOrbit from 'decorators/HandleCameraOrbit';
 import FullScreenInBackground from 'decorators/FullScreenInBackground';
 
 import app from 'App';
@@ -22,7 +22,7 @@ import app from 'App';
  */
 
 @FullScreenInBackground
-@CameraPositionHandlerWithMouse({ x: 4, y: 4 })
+@HandleCameraOrbit({ x: 4, y: 4 })
 class CustomEngine extends Engine {}
 
 const engine = new CustomEngine();
@@ -34,7 +34,7 @@ const engine = new CustomEngine();
  * * *******************
  */
 
-const text = new AnimatedText3D('Confettis', { color: '#0f070a' });
+const text = new AnimatedText3D('Confettis', { color: '#0f070a', size: app.isMobile ? 0.5 : 0.8 });
 text.position.x -= text.basePosition * 0.5;
 // text.position.y -= 0.5;
 engine.add(text);

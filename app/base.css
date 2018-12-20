@@ -80,9 +80,11 @@ a:focus {
 }
 
 .frame__demos {
+	width: 100%;
+	padding: 0 2.5rem;
 	margin: 1rem 0;
 	position: absolute;
-	bottom: 2rem;
+	bottom: 1rem;
 	left: 50%;
 	transform: translate(-50%, 0);
 }
@@ -97,6 +99,10 @@ a:focus {
 	background-color: var(--color-text);
 	transition: width 0.2s;
 } */
+
+.frame__demo {
+	margin-top: 1rem;
+}
 
 .frame__demo--current,
 .frame__demo:hover {
@@ -183,10 +189,15 @@ a:focus {
 	.frame__demos {
 		position: initial;
 		left: initial;
+		width: auto;
 		transform: none;
 		margin: 0;
+		padding: 0;
 		grid-area: demos;
 		justify-self: end;
+	}
+	.frame__demo {
+		margin-top: 0;
 	}
 	.frame__links {
 		grid-area: links;

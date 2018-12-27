@@ -1,65 +1,190 @@
-<!-- Pre-load large images of demo -->
-<div style="overflow:hidden; width:0px; height: 0px; pointer-events:none;">
-  <img src="http://tympanus.net/Development/NAME/img/something.jpg" style="width: 0; height: 0; opacity: 0;"/>
-</div>
+Five animated demonstrations of custom MeshLines developed with the library THREE.MeshLine.
+Each examples is built like an introduction of a specific theme.
 
-After introductory paragraph: 
+<img src="https://tympanus.net/codrops/wp-content/uploads/2018/12/preview.png" alt="Animated Mesh Lines Demo" width="1150" height="600" class="size-full wp-image-37036" />
 
-<div class="ct-featured-img-rss"><a href="http://tympanus.net/Development/NAME/"><!-- Featured Image for RSS Feed --></a></div>
 
-<strong>The demo is kindly sponsored by <a href="" rel="nofollow"></a></strong>. <em>If you would like to sponsor one of our demos, find out more <a href="https://tympanus.net/codrops/advertise/#advertise_demo">here</a>.</em>
+Two years ago, I started playing with the lines in Three.js to enrich a project with fluid effects and to amplify the perspective render of the scene.
+It is at this moment I discovered the THREE.MeshLine library made by Jaume Sanchez Elias. It solves the fact that you can not handle the width of your lines with the classic THREE.Line of Three.js.
+Indeed, the native Webgl GL_LINE method used by it does no support the width parameter.
 
-If you are writing the article directly in WordPress, please use the "text" editor in WordPress instead of the "visual" one, especially if you are planning to write code.
+Instead, THREE.MeshLine builds a strip of triangles billboarded to create a custom geometry.
+Cheaper in vertices than a THREE.TubeGeometry to create lines, the shape of THREE.MeshLine in rubbon is also really interesting!
 
-<h2>Section headline</h2>
 
-<h3>Sub-section headline</h3>
+<h2>Animate a MeshLine</h2>
 
-For code snippets replace < and > with &lt; and &gt;
+The only thing I missed was the possibility to animate lines without having to rebuild the geometry each time.
+Based on what had already been started and the method used in SVG to animate the paths, I implement 3 parameters on the MeshLineMaterial to create animated dashed line directly by the shader.
+These features has been forked at the library and here are their properties.
 
-Example for HTML:
+<h3>Dash Ratio</h3>
 
-<pre class="brush:html"><code>
-&lt;div class="st-container"&gt;
-&lt;/div&gt;&lt;!-- // st-container --&gt;
-</code></pre>
+GIF
 
-Example for CSS:
+<h3>Dash Array</h3>
 
-<pre class="brush:css"><code>
-body {
-  background: #000;
-}
-</code></pre>
+GIF
 
-Example for JavaScript:
+<h3>Dash Offset</h3>
+
+GIF
+
+
+Like with SVG, there parameters correctly handle allow you to animate the entire traced line:
+
+GIF
+
+Here is a complete example of how to create and animate a MeshLine:
 
 <pre class="brush:js"><code>
-  ...
+  const segmentLength = 1;
+  const nbrOfPoints = 10;
+  const points = [];
+  for (let i = 0; i < nbrOfPoints; i++) {
+    points.push(
+      i * segmentLength,
+      0,
+      0,
+    );
+  }
+
+  // Build the geometry
+  const line = new MeshLine();
+  line.setGeometry(points);
+  const geometry = line.geometry;
+
+  // Build the material with good parameters to animate it.
+  const material = new MeshLineMaterial({
+    lineWidth: 0.1,
+    color: new Color('#ff0000'),
+    dashArray: 2,     // always has to be the double of the line
+    dashOffset: 0,    // start the dash at zero
+    dashRatio: 0.75,  // visible length range min: 0.99, max: 0.5
+  });
+
+  // Build the Mesh
+  const lineMesh = new Mesh(geometry, material);
+  lineMesh.position.x = -4.5;
+
+  // ! Assuming you have your own webgl engine to add meshes on scene and update them.
+  webgl.add(lineMesh);
+
+  // ! Called each frame
+  function update() {
+    // Check if the dash is out to stop animate it.
+    if (lineMesh.material.uniforms.dashOffset.value < -2) return;
+
+    // Decrement the dashOffset value to animate the path with the dash.
+    lineMesh.material.uniforms.dashOffset.value -= 0.01;
+  }
 </code></pre>
 
-Available brushes for code hightlighting: html, scss, css, js, xml, php, mysql or any other if needed: https://highlightjs.org/
+<h2>Create your own line style</h2>
 
-Using JSFiddle embeds: [jsfiddle url="http://jsfiddle.net/wvega/UupFu/" height="300px" include="result,html,js,css" font-color="39464E" menu-background-color="FFFFFF" code-background-color="f3f5f6" accent-color="1C90F3"]
-Read more here: https://wordpress.org/plugins/jsfiddle-shortcode/other_notes/
+Now that you know how to animate your lines, I will propose you somes tips to customise the shape of your lines!
+Many of these methos are taken from the library examples. Feel free to explore!
+
+<h3>Smooth lines with THREE.SplineCurve or THREE.CatmullRomCurve3</h3>
+
+These classes smooth an array of points roughly positioned.
+They are perfect to simulate curved and fluid lines and keep the control of them (length, orientation, turbulences...)
+
+For instance, let's add some turbulence at our previous array of points:
+<pre class="brush:js"><code>
+  const segmentLength = 1;
+  const nbrOfPoints = 10;
+  const points = [];
+  const turbulence = 0.5;
+  for (let i = 0; i < nbrOfPoints; i++) {
+    // ! We have to wrapped points into a THREE.Vector3 this time
+    points.push(new Vector3(
+      i * segmentLength,
+      (Math.random() * (turbulence * 2)) - turbulence,
+      (Math.random() * (turbulence * 2)) - turbulence,
+    ));
+  }
+</code></pre>
+
+Then, use one of these classes to smooth your array of lines before you create the geometry:
+
+<pre class="brush:js"><code>
+  // 2D spline
+  // const linePoints = new Geometry().setFromPoints(new SplineCurve(points).getPoints(50));
+
+  // 3D spline
+  const linePoints = new Geometry().setFromPoints(new CatmullRomCurve3(points).getPoints(50));
+
+  const line = new MeshLine();
+  line.setGeometry(linePoints);
+  const geometry = line.geometry;
+</code></pre>
+
+And you have your smooth curved line !
+
+GIF
+
+Note that the difference between SplineCurve and CatmullRomCurve3 is that SplineCurve only smoothes in 2D (x and y axis).
+I still recommand using SplineCurve. It requires less performances to calculate lines and is often enouth to create the curved effect requested.
+
+For instance, the demos 2 and 3 are only made with the SplineCurves method.
+
+GIF DEMO 2
+
+GIF DEMO 3
+
+<h3>Use Raycasting</h3>
+
+Another technique extracted from the THREE.MeshLine examples is to use a raycaster to scan a Mesh already present on the scene.
+Thus, you can create your lines that follow the shape of the object:
+
+<pre class="brush:js"><code>
+  const radius = 4;
+  const yMax = -4;
+  const points = [];
+  const origin = new Vector3();
+  const direction = new Vector3();
+  const raycaster = new Raycaster();
+
+  let y = 0;
+  let angle = 0;
+  // Start the scan
+  while (y < yMax) {
+    // Update the orientation and the position of the raycaster
+    y -= 0.1;
+    angle += 0.2;
+    origin.set(radius * Math.cos(angle), y, radius * Math.sin(angle));
+    direction.set(-origin.x, 0, -origin.z);
+    direction.normalize();
+    raycaster.set(origin, direction);
+
+    // Save the coordinates raycsted.
+    // !Assuming the raycaster cross the object in the scene each time
+    const intersect = raycaster.intersectObject(objectToRaycast, true);
+    if (intersect.length) {
+      points.push(
+        intersect[0].point.x,
+        intersect[0].point.y,
+        intersect[0].point.z,
+      );
+    }
+  }
+</code></pre>
+
+Your raycasting balayage must of course cross the targeted mesh.
+I used this method for the last example with a part of a sphere:
+
+GIF DEMO 5
 
 
-Images can be a maximum of 890px wide (this will fill all the width of the article).
+Now you have enouth tool to explore and play with animated MeshLines.
+Feel free to share your own experiments and methods to create your lines!
 
-Available styles and shortcodes:
-
-<div class="box-attention">
-<strong>Attention:</strong> Some of these techniques are very experimental and won't work in all browsers.
-</div>
-
-In-article ad: 
-[adrotate group="2"]
-
-Browser support icons shortcode:
-[browsersupport chrome="all" safari="all" opera="all" firefox="flag" ie="9+"]
-(If a browser is not supported at all, just leave it out)
 
 <h2>References and Credits</h2>
 <ul>
-  <li><a href="">Some resource</a></li>
+  <li><a href="https://github.com/mrdoob/three.js">three.js</a></li>
+  <li><a href="https://github.com/spite/THREE.MeshLine">THREE.MeshLine</a></li>
+  <li><a href="https://www.clicktorelease.com/code/THREE.MeshLine/demo/shape.html">THREE.MeshLine - Shape example</a></li>
+  <li><a href="https://greensock.com/">gsap</a></li>
 </ul>

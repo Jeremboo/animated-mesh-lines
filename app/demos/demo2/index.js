@@ -34,7 +34,7 @@ const engine = new CustomEngine();
  * * *******************
  */
 
-const text = new AnimatedText3D('Confettis', { color: '#0f070a', size: app.isMobile ? 0.5 : 0.8 });
+const text = new AnimatedText3D('Confetti', { color: '#0f070a', size: app.isMobile ? 0.5 : 0.8 });
 text.position.x -= text.basePosition * 0.5;
 // text.position.y -= 0.5;
 engine.add(text);

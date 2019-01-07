@@ -3,29 +3,29 @@
 5 usages of the library THREE.MeshLines for Three.js to create and animate 3D custom lines, by [Jérémie Boulay](https://jeremieboulay.fr/portfolio/)
 
 <p align="center">
-  <a href="https://tympanus.net/codrops/?p=">
-    <img alt="Animated Mes Lines Title" src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview1.png?raw=true">
+  <a href="https://tympanus.net/codrops/?p=37034">
+    <img alt="Animated Mesh Lines" src="https://tympanus.net/codrops/wp-content/uploads/2019/01/Meshlines_featured.jpg">
   </a>
 </p>
 
 <p align="center">
-  <a href="https://tympanus.net/codrops/?p=">
-    <img alt="Animated Mes Lines - Shooting Star" src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview/preview.gif?raw=true" width="200">
+  <a href="https://tympanus.net/Development/AnimatedMeshLines">
+    <img alt="Animated Mesh Lines - Shooting Star" src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview/preview.gif?raw=true" width="200">
   </a>
-  <a href="https://tympanus.net/codrops/?p=">
-    <img alt="Animated Mes Lines - Energy " src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview3.gif?raw=true" width="200">
+  <a href="https://tympanus.net/Development/AnimatedMeshLines/demo3.html">
+    <img alt="Animated Mesh Lines - Energy " src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview3.gif?raw=true" width="200">
   </a>
-  <a href="https://tympanus.net/codrops/?p=">
-    <img alt="Animated Mes Lines - Colors " src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview4.gif?raw=true" width="200">
+  <a href="https://tympanus.net/Development/AnimatedMeshLines/demo4.html">
+    <img alt="Animated Mesh Lines - Colors " src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview4.gif?raw=true" width="200">
   </a>
-  <a href="https://tympanus.net/codrops/?p=">
-    <img alt="Animated Mes Lines - Boreal Sky" src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview5.gif?raw=true" width="200">
+  <a href="https://tympanus.net/Development/AnimatedMeshLines/demo5.html">
+    <img alt="Animated Mesh Lines - Boreal Sky" src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview5.gif?raw=true" width="200">
   </a>
 </p>
 
-[Article on Codrops](https://tympanus.net/codrops/?p=)
+[Article on Codrops](https://tympanus.net/codrops/?p=37034)
 
-[Demo](http://tympanus.net/Development/.../)
+[Demo](https://tympanus.net/Development/AnimatedMeshLines)
 
 ## Credits
 

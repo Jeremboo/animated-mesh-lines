@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://tympanus.net/codrops/?p=37034">
-    <img alt="Animated Mesh Lines" src="https://tympanus.net/codrops/wp-content/uploads/2019/01/Meshlines_featured.jpg">
+    <img alt="Animated Mesh Lines" src="https://tympanus.net/codrops/wp-content/uploads/2019/01/MeshLines_Featured-2.jpg">
   </a>
 </p>
 

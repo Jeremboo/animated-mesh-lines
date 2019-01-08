@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://tympanus.net/Development/AnimatedMeshLines">
-    <img alt="Animated Mesh Lines - Shooting Star" src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview/preview.gif?raw=true" width="200">
+    <img alt="Animated Mesh Lines - Shooting Star" src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview.gif?raw=true" width="200">
   </a>
   <a href="https://tympanus.net/Development/AnimatedMeshLines/demo3.html">
     <img alt="Animated Mesh Lines - Energy " src="https://github.com/Jeremboo/animated-mesh-lines/blob/master/previews/preview3.gif?raw=true" width="200">

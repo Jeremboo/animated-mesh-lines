@@ -17,7 +17,6 @@ export default class LineGenerator extends Object3D {
 
     this.update = this.update.bind(this);
     this.start = this.start.bind(this);
-    this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
   }
 

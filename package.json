@@ -17,7 +17,7 @@
     "dat.gui": "^0.7.3",
     "gsap": "^2.0.2",
     "postprocessing": "^5.3.2",
-    "three": "^0.98.0",
+    "three": "^0.125.0",
     "three.meshline": "^1.1.0"
   },
   "devDependencies": {
